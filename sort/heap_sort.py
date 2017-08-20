@@ -6,37 +6,58 @@ def heap_sort(_list):
     """
     Пирамидальная сортировка. Строим CБД слева направо.
     По закону: a[i] >= a{2*i + 1] and a[i] >= a[2*i + 2]. Иначе говоря, это КУЧА.
-    2 этапа. Постороение пирамиды, Сортировка
+    2 этапа. Постороение первичной пирамиды, Вытеснение максималного, перестроение.
 
-    :params _list: Массив для сортировки.
+    :param _list: Массив для сортировки.
     :type _list: list
 
     :return: Отсортированный массив.
     :rtype: list
 
     """
+    def swap_items(index1, index2):
+        """
+        Меняем местами два элемента.
+
+        :param index1: Индекс левого элемента.
+        :param index2: Индекс правого элемента.
+        :type index1: int
+        :type index2: int
+
+        """
+        if _list[index1] < _list[index2]:
+            _list[index1], _list[index2] = _list[index2], _list[index1]
+
+    def sift_down(parent, limit):
+        """
+        Ищем максимальный среди родителя и потомков, и ставим его в корень.
+
+        :param parent: Индекс родительского элемента.
+        :param limit: Максимальное число элементов в куче. Ограничитель.
+        :type parent: int
+        :type limit: int
+
+        """
+        while True:
+            child = parent * 2 + 2
+            if child < limit:
+                if _list[child] < _list[child - 1]:
+                    child -= 1
+                swap_items(parent, child)
+                parent = child
+            else:
+                break
+
     length = len(_list)
 
-    # Меняем местами.
-    def swap(pi, ci):
-        if _list[pi] < _list[ci]:
-            _list[pi], _list[ci] = _list[ci], _list[pi]
+    # Формирование первичной пирамиды.
+    for index in range(int(length // 2) - 1, -1, -1):
+        sift_down(index, length)
 
-    # Просеивание через КУЧУ.
-    def sift(index, unsorted):
-        while index * 2 + 2 < unsorted:
-            gtci = max(_list[index * 2 + 1], _list[index * 2 + 2])
-            swap(index, gtci)
-            index = gtci
-
-    # Строим пирамиду. Правая часть дерева n/2 - 1
-    for i in range(int((length / 2)) - 1, -1, -1):
-        sift(i, length)
-
-    # sort
-    for i in range(length - 1, 0, -1):
-        swap(i, 0)
-        sift(0, i)
+    # Окончательное упорядочение.
+    for index in range(length - 1, 0, -1):
+        swap_items(index, 0)
+        sift_down(0, index)
 
     return _list
 
