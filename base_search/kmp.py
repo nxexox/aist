@@ -48,22 +48,21 @@ def kmp_search(needle, haystack):
     :rtype: int
 
     """
-    d = prefix_function(needle)
-    i = j = 0
+    index = -1
+    f = prefix_function(needle)
+    k = 0
 
-    while i < len(haystack) and j < len(needle):  # Пока не найдем или не достигнем конца.
-        if needle[j] == haystack[i]:
-            i += 1
-            j += 1
-        elif j == 0:
-            i += 1
-        else:
-            j = d[j - 1]
+    for i in range(len(haystack)):
 
-    if j == len(needle):
-        return i - j - 1
+        while k > 0 and needle[k] != haystack[i]:
+            k = f[k - 1]
+        if needle[k] == haystack[i]:
+            k = k + 1
+        if k == len(needle):
+            index = i - len(needle) + 1
+            break
 
-    return None
+    return index
 
 
 if __name__ == "__main__":
