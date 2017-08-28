@@ -38,19 +38,16 @@ function heapSort(arr) {
 
   // Формируем кучу
   // Начинаем с середины массива, так как в этом случае у элемента гарантированно есть потомки
-  for (var i=middle; i >= 0; i--) {
+  for (var i = middle; i >= 0; i--) {
     sift(i, length);
   }
 
-  for (var i = arr.length-1; i >= 0; i--) {
+  for (var i = length-1; i >= 0; i--) {
     // На место первого элемента ставим последний
     swap(0, i);
 
-    //Последний исключаем
-    length -= 1;
-
     // Просеиваем первый через кучу
-    sift(0, length);
+    sift(0, i);
   }
 
   return arr;
