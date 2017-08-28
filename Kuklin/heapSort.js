@@ -1,6 +1,5 @@
 function heapSort(arr) {
   var middle = Math.floor(arr.length/2)-1;
-  var resultArr = [];
   var length = arr.length;
     
   function swap(index1, index2) {
