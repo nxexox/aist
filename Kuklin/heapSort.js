@@ -1,6 +1,7 @@
 function heapSort(arr) {
   var middle = Math.floor(arr.length/2)-1;
   var resultArr = [];
+  var length = arr.length;
     
   function swap(index1, index2) {
     var temp = arr[index1];
@@ -8,7 +9,7 @@ function heapSort(arr) {
     arr[index2] = temp;    
   }
 
-  function sift(parent) {
+  function sift(parent, limit) {
     var left;
     var right;
     var max;
@@ -18,11 +19,11 @@ function heapSort(arr) {
       right = 2 * parent + 2;
       max = parent;
 
-      if (left < arr.length && arr[left] > arr[max]) {
+      if (left < limit && arr[left] > arr[max]) {
         max = left;
       }
 
-      if (right < arr.length && arr[right] > arr[max])  {
+      if (right < limit && arr[right] > arr[max])  {
         max = right;
       }
       
@@ -36,25 +37,25 @@ function heapSort(arr) {
     }
   }
 
-
   // Формируем кучу
   // Начинаем с середины массива, так как в этом случае у элемента гарантированно есть потомки
   for (var i=middle; i >= 0; i--) {
-    sift(i);
+    sift(i, length);
   }
 
   for (var i = arr.length-1; i >= 0; i--) {
-    // Берем первый элемент так как он максимальный
-    var root = arr.shift();
-    resultArr.unshift(root);
+    // На место первого элемента ставим последний
+    swap(0, i);
 
-    // На место первого элемента ставим последний, и просеиваем его через кучу
-    arr.unshift(arr.pop());
-    sift(0);
+    //Последний исключаем
+    length -= 1;
+
+    // Просеиваем первый через кучу
+    sift(0, length);
   }
 
-  return resultArr;
+  return arr;
 }
 
-var arr = [998, 645, 48, 689, 213, 15, 8, 16, 59, 11, 394, 43];
+var arr = [998, 645, 48, 689, 213, 15, 8, 16, 16, 59, 11, 394, 1043];
 console.log(heapSort(arr));
