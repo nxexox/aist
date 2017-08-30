@@ -13,7 +13,7 @@ function heapSort(arr) {
     var right;
     var max;
 
-    while(true) {
+    while(2 * parent + 2 <= limit) {
       left = 2 * parent + 1;
       right = 2 * parent + 2;
       max = parent;
