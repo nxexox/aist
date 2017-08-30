@@ -1,0 +1,9 @@
+from heapq import heappush, heappop
+
+def heapsort(array):
+    heap = []
+    for val in array:
+        heappush(heap, val)
+    return [heappop(heap) for i in range(len(heap))]
+
+print(heapsort([12312, 12, 55, 765, 234, 91283, 100, 99, 12321, 74, 13, 8, 5, 49, 21]))
