@@ -29,8 +29,8 @@ class Node(object):
             right = self.right._to_tree() if self.right else '{:_>{}}\n'.format('#r', self.level * 4 + 4))
 
     def depth(self):
-        return max([self.left.level if self.left else 0, 
-                    self.right.level if self.right else 0, self.level])
+        return max([self.left.depth() if self.left else 0, 
+                    self.right.depth() if self.right else 0, self.level])
 
     def delta(self):
         return self.left.depth() if self.left else 0 - self.right.depth() if self.right else 0
@@ -77,11 +77,11 @@ class AVL(object):
 
     def _fix_levels(self, node):
         if node.left:
-            if node.left.level <= node.level:
+            if node.left.level is not node.level + 1:
                 node.left.level = node.level + 1
             node.left = self._fix_levels(node.left)
         if node.right:
-            if node.right.level <= node.level:
+            if node.right.level is not node.level + 1:
                 node.right.level = node.level + 1
             node.right = self._fix_levels(node.right)
         
@@ -128,19 +128,22 @@ class AVL(object):
         if not node:
             node = self.root
             
+        double_swap = node.right.depth() if node.right else 0 >= node.left.depth() if node.left else 0
+        print '%s, ld: %s, rd: %s' % (node.value, node.left.depth() if node.left else 0, node.right.depth() if node.right else 0)
+
         if math.fabs(node.delta()) < 2:
             return node
         else:
             if node.delta() < 0:
-                if node.left and node.right and math.fabs(node.left.delta()) >= math.fabs(node.right.delta()):
-                    node = self._swap_left(node)
-                else:
+                if not double_swap:
                     node = self._swap_right_left(node)
-            else:
-                if node.left and node.right and math.fabs(node.left.delta()) <= math.fabs(node.right.delta()):
-                    node = self._swap_right(node)
                 else:
+                    node = self._swap_left(node)
+            else:
+                if not double_swap:
                     node = self._swap_left_right(node)
+                else:
+                    node = self._swap_right(node)
             return node
 
     def add(self, item):
