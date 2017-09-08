@@ -28,12 +28,105 @@ class Node(object):
             left = self.left._to_tree() if self.left else '{:_>{}}\n'.format('#l', self.level * 4 + 4),
             right = self.right._to_tree() if self.right else '{:_>{}}\n'.format('#r', self.level * 4 + 4))
 
+
+    def _fix_levels(self):
+        if self.left:
+            if self.left.level is not self.level + 1:
+                self.left.level = self.level + 1
+            self.left = self.left._fix_levels()
+        if self.right:
+            if self.right.level is not self.level + 1:
+                self.right.level = self.level + 1
+            self.right = self.right._fix_levels()
+        
+        return self
+
+    def _swap_left(self):
+        if not self.right:
+            return
+
+        right = self.right.right if self.right.right else None
+        value = self.right.value
+
+        self.left = Node(
+                        self.value, 
+                        right=self.right.left if self.right and self.right.left else None, 
+                        left=self.left if self.left else None, 
+                        level=self.level+1)
+        self.right = right
+        self.value = value
+        self._fix_levels()
+
+    def _swap_right(self):
+        if not self.left:
+            return
+
+        left = self.left.left if self.left.left else None
+        value = self.left.value
+        
+        self.right = Node(
+                        self.value, 
+                        right=self.right if self.right else None, 
+                        left=self.left.right if self.left and self.left.right else None, 
+                        level=self.level+1)
+        self.left = left
+        self.value = value
+        self._fix_levels()
+
+    def _swap_right_left(self):
+        self.right._swap_right()
+        self._swap_left()
+
+    def _swap_left_right(self):
+        self.left._swap_left()
+        self._swap_right()
+
+    def balance(self):
+        """Балансировка дерева по ноде"""
+    
+        double_swap = math.fabs(self.right.depth() if self.right else 0) < math.fabs(self.left.depth() if self.left else 0)
+        # print '%s, ld: %s, rd: %s' % (node.value, node.left.depth() if node.left else 0, node.right.depth() if node.right else 0)
+        print 'node %s' % self.value
+        print 'left depth %s' % (self.left.depth() if self.left else 0)
+        print 'right depth %s' % (self.right.depth() if self.right else 0)
+        print 'left node %s' % self.left
+        print 'right node %s' % self.right
+        print 'delta %s' % math.fabs(self.delta())
+        print '----------'
+        if math.fabs(self.delta()) < 2:
+            return
+    
+        #print 'double swap %s' % double_swap
+        if self.delta() < 0:
+            if double_swap:
+                print 'right_left'
+                self._swap_right_left()
+            else:
+                print 'left'
+                self._swap_left()
+        else:
+            if double_swap:
+                print 'left_right'
+                self._swap_left_right()
+            else:
+                print 'right'
+                self._swap_right()
+
     def depth(self):
         return max([self.left.depth() if self.left else 0, 
                     self.right.depth() if self.right else 0, self.level])
 
     def delta(self):
-        return self.left.depth() if self.left else 0 - self.right.depth() if self.right else 0
+        return (self.left.depth() if self.left else 0) - (self.right.depth() if self.right else 0)
+
+
+    def removemin(self):
+        if not self.left:
+            return self.right
+
+        self.left = self.left.removemin()
+        self.balance()
+        return self
 
     def add(self, item):
         if not item:
@@ -55,6 +148,8 @@ class Node(object):
                 self.right.add(item)
             else:
                 self.right = item
+        self.balance()
+        return item
 
 class AVL(object):
     """
@@ -74,86 +169,18 @@ class AVL(object):
 
     def __str__(self):
         return str(self.root._to_tree())
-
-    def _fix_levels(self, node):
-        if node.left:
-            if node.left.level is not node.level + 1:
-                node.left.level = node.level + 1
-            node.left = self._fix_levels(node.left)
-        if node.right:
-            if node.right.level is not node.level + 1:
-                node.right.level = node.level + 1
-            node.right = self._fix_levels(node.right)
-        
-        return node
-
-    def _swap_left(self, node):
-        if not node.right:
-            return node
-        node = Node(node.right.value, 
-                    right=node.right.right if node.right.right else None, 
-                    left=Node(
-                        node.value, 
-                        right=node.right.left if node.right and node.right.left else None, 
-                        left=node.left if node.left else None, 
-                        level=node.level+1), 
-                    level=node.level)
-
-        return self._fix_levels(node)
-
-    def _swap_right(self, node):
-        if not node.left:
-            return node
-        node = Node(node.left.value, 
-                    left=node.left.left if node.left.left else None, 
-                    right=Node(
-                        node.value, 
-                        right=node.right if node.right else None, 
-                        left=node.left.right if node.left and node.left.right else None, 
-                        level=node.level+1), 
-                    level=node.level)
-                    
-        return self._fix_levels(node)
-
-    def _swap_right_left(self, node):
-        node.right = self._swap_right(node.right)
-        return self._swap_left(node)
-
-    def _swap_left_right(self, node):
-        node.left = self._swap_left(node.left)
-        return self._swap_right(node)
-
-    def _balance(self, node=None):
-        """Балансировка дерева по ноде"""
-        if not node:
-            node = self.root
-            
-        double_swap = node.right.depth() if node.right else 0 >= node.left.depth() if node.left else 0
-        print '%s, ld: %s, rd: %s' % (node.value, node.left.depth() if node.left else 0, node.right.depth() if node.right else 0)
-
-        if math.fabs(node.delta()) < 2:
-            return node
-        else:
-            if node.delta() < 0:
-                if not double_swap:
-                    node = self._swap_right_left(node)
-                else:
-                    node = self._swap_left(node)
-            else:
-                if not double_swap:
-                    node = self._swap_left_right(node)
-                else:
-                    node = self._swap_right(node)
-            return node
-
+    
     def add(self, item):
         """Добавить элемент в дереве"""
         self.root.add(item)
-        self.root = self._balance()
 
-    def remove(self, item):
+    def remove(self, item, node=None):
         """Удалить элемент в дереве"""
-        pass
+        item = self.find(item)
+        if not item:
+            return 'Элемент не найден'
+
+        min_node = item.findmin()
 
     def find(self, value, node=None):
         """Найти элемент в дереве"""
@@ -174,6 +201,9 @@ class AVL(object):
         return False
 
 awl_tree = AVL([7, 2, 6, 5, 8, 3, 1, 12, ])
-# awl_tree = AVL([7, 2, 6, ])
+#awl_tree = AVL([7, 2, 6, 5, 8, 3,])
+print awl_tree
+print awl_tree.find(3)
+print awl_tree.remove(3)
 print awl_tree
 #print awl_tree.find(1)
