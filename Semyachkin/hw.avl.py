@@ -13,16 +13,21 @@ class Node(object):
 
     def __init__(self, value, left=None, right=None, level=0):
         """Инициализируем ноду, добавляем правый левый элемент"""
+
         self.value = value
         self.left = left if left else None
         self.right = right if right else None
         self.level = level
 
     def __str__(self):
+        """Пишем строковое представление ноды"""
+
         return 'Node(value: {}, level: {}, l:{}, r:{})\n'.format(self.value, self.level, 
             self.left.value if self.left else '', self.right.value if self.right else '')
 
     def _to_tree(self):
+        """Рекурсивно рендерим ноду в дерево-подобное представление"""
+
         return '{root:_>{level}}\n{left:_>{level}}{right:_>{level}}'.format(
             root = self.value, level = self.level * 4,
             left = self.left._to_tree() if self.left else '{:_>{}}\n'.format('#l', self.level * 4 + 4),
@@ -30,6 +35,11 @@ class Node(object):
 
 
     def _fix_levels(self):
+        """
+        Лечим поломанные указатели уровней ноды. Рекурсивно пробегаем все дерево, 
+        считаем уровни вручную и подставляем правильные значения
+        """
+
         if self.left:
             if self.left.level is not self.level + 1:
                 self.left.level = self.level + 1
@@ -42,6 +52,8 @@ class Node(object):
         return self
 
     def _swap_left(self):
+        """Левый поворот"""
+
         if not self.right:
             return
 
@@ -49,15 +61,18 @@ class Node(object):
         value = self.right.value
 
         self.left = Node(
-                        self.value, 
-                        right=self.right.left if self.right and self.right.left else None, 
-                        left=self.left if self.left else None, 
-                        level=self.level+1)
+            self.value, 
+            right=self.right.left if self.right and self.right.left else None, 
+            left=self.left if self.left else None, 
+            level=self.level+1)
+
         self.right = right
         self.value = value
         self._fix_levels()
 
     def _swap_right(self):
+        """Правый поворот"""
+
         if not self.left:
             return
 
@@ -65,62 +80,71 @@ class Node(object):
         value = self.left.value
         
         self.right = Node(
-                        self.value, 
-                        right=self.right if self.right else None, 
-                        left=self.left.right if self.left and self.left.right else None, 
-                        level=self.level+1)
+            self.value, 
+            right=self.right if self.right else None, 
+            left=self.left.right if self.left and self.left.right else None, 
+            level=self.level+1)
+
         self.left = left
         self.value = value
         self._fix_levels()
 
     def _swap_right_left(self):
+        """Правый\левый поворот"""
+
         self.right._swap_right()
         self._swap_left()
 
     def _swap_left_right(self):
+        """Левый\правый поворот"""
+
         self.left._swap_left()
         self._swap_right()
 
     def balance(self):
         """Балансировка дерева по ноде"""
-    
-        double_swap = math.fabs(self.right.depth() if self.right else 0) < math.fabs(self.left.depth() if self.left else 0)
-        # print '%s, ld: %s, rd: %s' % (node.value, node.left.depth() if node.left else 0, node.right.depth() if node.right else 0)
-        print 'node %s' % self.value
-        print 'left depth %s' % (self.left.depth() if self.left else 0)
-        print 'right depth %s' % (self.right.depth() if self.right else 0)
-        print 'left node %s' % self.left
-        print 'right node %s' % self.right
-        print 'delta %s' % math.fabs(self.delta())
-        print '----------'
+
+        # Лечим перепутанные уровни
+        self._fix_levels()
+
+        # Пытаемся понять, нужен ли нам двойной поворот или хватит одного. Определяем по разницы длинн веток
+        double_swap = math.fabs(self.right.depth() if self.right else 0) \
+                        < math.fabs(self.left.depth() if self.left else 0)
+        
         if math.fabs(self.delta()) < 2:
             return
     
-        #print 'double swap %s' % double_swap
         if self.delta() < 0:
+            # если разница отрицательная, значит левый
             if double_swap:
-                print 'right_left'
                 self._swap_right_left()
             else:
-                print 'left'
                 self._swap_left()
         else:
+            # если разница положительная, значит правый
             if double_swap:
-                print 'left_right'
                 self._swap_left_right()
             else:
-                print 'right'
                 self._swap_right()
 
+        
+
     def depth(self):
+        """Возвращаем максимальную глубину ноды"""
+
         return max([self.left.depth() if self.left else 0, 
                     self.right.depth() if self.right else 0, self.level])
 
     def delta(self):
-        return (self.left.depth() if self.left else 0) - (self.right.depth() if self.right else 0)
+        """Разница уровней правой\левой веток"""
+
+        return (self.left.depth() if self.left else 0) \
+            - (self.right.depth() if self.right else 0)
 
 
     def removemin(self):
+        """Возвращаем ноду без минимального элемента, возвращая его"""
+
         if not self.left:
             return self.right
 
@@ -128,7 +152,17 @@ class Node(object):
         self.balance()
         return self
 
+    def findmin(self):
+        """
+        Находим минимальный элемент в ноде. По свойству сбаллансированного дерева, 
+        минимальный элемент в крайней левой ветке, если его нет — возвращаем его самого.
+        """
+
+        return self.left.findmin() if self.left else self
+
     def add(self, item):
+        """ Добавляем элемент в ноду"""
+
         if not item:
             return
 
@@ -139,15 +173,19 @@ class Node(object):
             item.level += 1
 
         if self.value > item.value:
+            # если новый эл-т больше, то шагаем в левую ветку
             if self.left:   
                 self.left.add(item)
             else:
                 self.left = item
         elif self.value < item.value:
+            # иначе — в правую
             if self.right:   
                 self.right.add(item)
             else:
                 self.right = item
+
+        # баллансируем
         self.balance()
         return item
 
@@ -176,11 +214,36 @@ class AVL(object):
 
     def remove(self, item, node=None):
         """Удалить элемент в дереве"""
-        item = self.find(item)
-        if not item:
-            return 'Элемент не найден'
 
-        min_node = item.findmin()
+        if not item:
+            return 'Элемент не указан'
+
+        if not node:
+            # запускаем наш метод рекурсивно, переопределяя корень дерева
+            self.root = self.remove(item, node=self.root)
+            self.root.level = 0
+            self.root.balance()
+            return self.root
+        
+        if item < node.value:
+            node.left = self.remove(item, node=node.left)
+        elif item > node.value:
+            node.right = self.remove(item, node=node.right)
+        else:
+            left, right = node.left, node.right
+            del node
+            
+            if not right:
+                return left
+
+            min = right.findmin()
+            min.right = right.removemin()
+            min.left = left
+            min.balance()
+            return min
+        
+        node.balance()
+        return node
 
     def find(self, value, node=None):
         """Найти элемент в дереве"""
@@ -200,10 +263,17 @@ class AVL(object):
             
         return False
 
-awl_tree = AVL([7, 2, 6, 5, 8, 3, 1, 12, ])
-#awl_tree = AVL([7, 2, 6, 5, 8, 3,])
-print awl_tree
+# Инициализируем дерево
+awl_tree = AVL([7, 2, 6, 5, 8, 3, 1, 12, 10, 8])
+
+# Ищем элемент три
 print awl_tree.find(3)
-print awl_tree.remove(3)
+
+# Выводим дерево в построенном виде
 print awl_tree
-#print awl_tree.find(1)
+
+# Удалаем элемент
+awl_tree.remove(6)
+
+# Выводим дерево с удаленным элементом
+print awl_tree
