@@ -26,9 +26,8 @@ https://www.youtube.com/playlist?list=PLTpnHAP4hQVfXPFkBRsy8p84rdi-8UKBT
  * [Стэк](./structures/stack.py)
  * [Очередь](./structures/queue.py)
  * [Множества](./structures/set.py)
- * Бинарное дерево
+ * [Бинарное дерево](./structures/binary_three.py)
  * Сбалансированное бинарное дерево поиска
- * Красно-черное дерево
 
 
 ### Домашние задания.
@@ -40,7 +39,8 @@ https://www.youtube.com/playlist?list=PLTpnHAP4hQVfXPFkBRsy8p84rdi-8UKBT
  * [Поиск k-го элемента порядковой статистики на неупорядоченном массиве. Сложность O(n) по времени.](./base_search/k-search.py)
  * Один из поисков: [BM](./base_search/bm.py), [RK](./base_search/rk.py), [KMP](./base_search/kmp.py)
  * Одна из структур данных: [Стэк](./structures/stack.py), [Очередь](./structures/queue.py)
- * Бинарное дерево
+ * [Бинарное дерево](./structures/binary_three.py)
+ * Сбалансированное бинарное дерево
     
 
 ### Большие задания по блокам.
