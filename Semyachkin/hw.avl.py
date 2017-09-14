@@ -101,31 +101,46 @@ class Node(object):
         self.left._swap_left()
         self._swap_right()
 
+    def _need_double(self, direction):
+        """
+        Пытаемся понять необходимость двойного левого-правого или правого-левого поворота.
+        Определяем по принципу разницы между правым\левым уровнем дочернего узла
+
+        """
+        if not direction or direction not in ['lr', 'rl']:
+            raise Exception('Нужно указать направление')
+
+        # определяем целевой узел
+        node = self.right if direction is 'rl' else self.left
+        
+        left_depth = math.fabs(node.left.depth() if node and node.left else self.level)
+        right_depth = math.fabs(node.right.depth() if node and node.right else self.level)
+
+        return left_depth > right_depth if direction is 'rl' else left_depth < right_depth
+
     def balance(self):
         """Балансировка дерева по ноде"""
 
         # Лечим перепутанные уровни
         self._fix_levels()
 
-        # Пытаемся понять, нужен ли нам двойной поворот или хватит одного. Определяем по разницы длинн веток
-        double_swap = math.fabs(self.right.depth() if self.right else self.level) \
-                        < math.fabs(self.left.depth() if self.left else self.level)
-        
+        # нужно ли вообще поворачивать
         if math.fabs(self.delta()) < 2:
             return
     
         if self.delta() < 0:
             # если разница отрицательная, значит левый
-            if double_swap:
+            if self._need_double(direction='rl'):
                 self._swap_right_left()
             else:
                 self._swap_left()
         else:
             # если разница положительная, значит правый
-            if double_swap:
+            if self._need_double(direction='lr'):
                 self._swap_left_right()
             else:
                 self._swap_right()
+        self.balance()
 
     def depth(self):
         """Возвращаем максимальную глубину ноды"""
@@ -170,13 +185,13 @@ class Node(object):
         if item.level < self.level + 1:
             item.level += 1
 
-        if self.value > item.value:
+        if self.value >= item.value:
             # если новый эл-т больше, то шагаем в левую ветку
             if self.left:   
                 self.left.add(item)
             else:
                 self.left = item
-        elif self.value <= item.value:
+        elif self.value < item.value:
             # иначе — в правую
             if self.right:   
                 self.right.add(item)
@@ -281,6 +296,9 @@ awl_tree.remove(12)
 
 # строим дерево из последовательностей чисел
 print AVL([1,2,3,4,5,6,7,8,9,10])
+
+# обратная последовательность
+print AVL([10,9,8,7,6,5,4,3,2,1])
 
 # из одинаковых чисел
 print AVL([1,1,1,1,1,1,1])
