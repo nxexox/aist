@@ -108,8 +108,8 @@ class Node(object):
         self._fix_levels()
 
         # Пытаемся понять, нужен ли нам двойной поворот или хватит одного. Определяем по разницы длинн веток
-        double_swap = math.fabs(self.right.depth() if self.right else 0) \
-                        < math.fabs(self.left.depth() if self.left else 0)
+        double_swap = math.fabs(self.right.depth() if self.right else self.level) \
+                        < math.fabs(self.left.depth() if self.left else self.level)
         
         if math.fabs(self.delta()) < 2:
             return
@@ -127,19 +127,17 @@ class Node(object):
             else:
                 self._swap_right()
 
-        
-
     def depth(self):
         """Возвращаем максимальную глубину ноды"""
 
-        return max([self.left.depth() if self.left else 0, 
-                    self.right.depth() if self.right else 0, self.level])
+        return max([self.left.depth() if self.left else self.level, 
+                    self.right.depth() if self.right else self.level, self.level])
 
     def delta(self):
         """Разница уровней правой\левой веток"""
-
-        return (self.left.depth() if self.left else 0) \
-            - (self.right.depth() if self.right else 0)
+        
+        return (self.left.depth() if self.left else self.level) \
+            - (self.right.depth() if self.right else self.level)
 
 
     def removemin(self):
@@ -178,7 +176,7 @@ class Node(object):
                 self.left.add(item)
             else:
                 self.left = item
-        elif self.value < item.value:
+        elif self.value <= item.value:
             # иначе — в правую
             if self.right:   
                 self.right.add(item)
@@ -214,11 +212,14 @@ class AVL(object):
 
     def remove(self, item, node=None):
         """Удалить элемент в дереве"""
-
         if not item:
             return 'Элемент не указан'
 
         if not node:
+            # при первом запуске проверяем, ест ли элемент
+            if not self.find(item):
+                return 'Элемент не найден'
+
             # запускаем наш метод рекурсивно, переопределяя корень дерева
             self.root = self.remove(item, node=self.root)
             self.root.level = 0
@@ -275,5 +276,11 @@ print awl_tree
 # Удалаем элемент
 awl_tree.remove(6)
 
-# Выводим дерево с удаленным элементом
-print awl_tree
+# Удаляем несуществующий элемент
+awl_tree.remove(12)
+
+# строим дерево из последовательностей чисел
+print AVL([1,2,3,4,5,6,7,8,9,10])
+
+# из одинаковых чисел
+print AVL([1,1,1,1,1,1,1])

@@ -16,3 +16,8 @@ while len(shuffle) != len(arr):
         shuffle.append(item)
     
 print(shuffle)
+
+
+
+class Test(object):
+    pass
