@@ -9,6 +9,15 @@ while len(shuffle) != len(arr):
   item = arr[random.randint(0, len(arr) - 1)]
 
   if item not in shuffle:
-    shuffle.append(item)
+    if len(shuffle) == 0:
+        shuffle.append(item)
 
+    elif shuffle[-1] > item:
+        shuffle.append(item)
+    
 print(shuffle)
+
+
+
+class Test(object):
+    pass
