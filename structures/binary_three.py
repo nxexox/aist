@@ -77,10 +77,10 @@ class BinaryThree(object):
         :type root: Node
 
         :return: Минимальное значение.
-        :rtype: object
+        :rtype: Node
 
         """
-        root = root if isinstance(root, Node) else self.root
+        root = root if root is not None else self.root
         if root is None:
             return None
 
@@ -97,10 +97,10 @@ class BinaryThree(object):
         :type root: Node
 
         :return: Максимальное значение.
-        :rtype: object
+        :rtype: Node
 
         """
-        root = root if isinstance(root, Node) else self.root
+        root = root if root is not None else self.root
         if root is None:
             return None
 

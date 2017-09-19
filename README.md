@@ -27,7 +27,7 @@ https://www.youtube.com/playlist?list=PLTpnHAP4hQVfXPFkBRsy8p84rdi-8UKBT
  * [Очередь](./structures/queue.py)
  * [Множества](./structures/set.py)
  * [Бинарное дерево](./structures/binary_three.py)
- * Сбалансированное бинарное дерево поиска
+ * [Сбалансированное бинарное дерево поиска](./structures/AVL.py)
 
 
 ### Домашние задания.
@@ -40,7 +40,7 @@ https://www.youtube.com/playlist?list=PLTpnHAP4hQVfXPFkBRsy8p84rdi-8UKBT
  * Один из поисков: [BM](./base_search/bm.py), [RK](./base_search/rk.py), [KMP](./base_search/kmp.py)
  * Одна из структур данных: [Стэк](./structures/stack.py), [Очередь](./structures/queue.py)
  * [Бинарное дерево](./structures/binary_three.py)
- * Сбалансированное бинарное дерево
+ * [Сбалансированное бинарное дерево поиска](./structures/AVL.py)
     
 
 ### Большие задания по блокам.
@@ -107,3 +107,21 @@ https://www.youtube.com/playlist?list=PLTpnHAP4hQVfXPFkBRsy8p84rdi-8UKBT
     Пример: валидная - 1+2-3*(2+x). Не валидные: 1+; () - (); 98-++-98; и тд.
     Все сложные ситуации: -1, 8*(-x), 7-(-5); И т.д. обработка на вшаше усмотрение(смотрите по своим силам).
     
+
+## Блок основого курса.
+
+Весь пройденный материал можно найти на канале youtube в виде видеолекций.
+https://www.youtube.com/playlist?list=PLTpnHAP4hQVcBCG4ZYEO1PPnyqnF1pB46&disable_polymer=true
+Практические примеры реализация некоторых алгоритмов и структур данных имееются 
+в соотвествующих директориях репозитория. 
+Так же по фамилиям есть реализации домашних заданий, 
+которые сдали обучающиеся. 
+Весь перечень курса можно увидеть ниже, 
+в порядке прохождения курса, с примером реализации некоторых алгоритмов. 
+
+
+### Деревья.
+ * B - дерево.
+ * B+, B*, B+* - дерево.
+ * T - деревья.
+
