@@ -4,5 +4,9 @@
 
 __pycache__/
 
+python3
+python2
+
+datasets/*
 
 _config.yml
