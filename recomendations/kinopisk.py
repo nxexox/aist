@@ -256,5 +256,6 @@ class Parser(object):
 
 
 if __name__ == "__main__":
-    parser = Parser(2, 10000000, file_path="datasets")
-    result = parser.main_while(10000)
+    parser = Parser(2, 1000, file_path="datasets")
+    result = parser.main_while(1000)
+
